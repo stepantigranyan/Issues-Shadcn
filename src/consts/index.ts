@@ -1,0 +1,1 @@
+export const VISIBLE_ISSUES_COUNT = 3;
