@@ -9,12 +9,12 @@ import {
 import type {FC} from "react";
 
 export interface IssuesTablePaginationProps {
-    count: number;
+    pages: number;
     currentPage: number;
     onChangePage: (direction: "right" | "left", page?: number) => void;
 }
 
-export const IssueTablePagination: FC<IssuesTablePaginationProps> = ({count, onChangePage, currentPage}) => {
+const IssueTablePagination: FC<IssuesTablePaginationProps> = ({pages, onChangePage, currentPage}) => {
     return (
         <Pagination>
             <PaginationContent className="grid grid-cols-[100px_300px_100px]">
@@ -49,30 +49,32 @@ export const IssueTablePagination: FC<IssuesTablePaginationProps> = ({count, onC
                     </PaginationItem>
 
                     {
-                        currentPage + 1 <= count &&
+                        currentPage + 1 <= pages &&
                         <PaginationItem>
                             <PaginationLink onClick={() => {onChangePage("left", currentPage + 1)}} href="#">{currentPage + 1}</PaginationLink>
                         </PaginationItem>
                     }
 
                     {
-                        currentPage + 2 < count &&
+                        currentPage + 2 < pages &&
                         <PaginationItem>
                             <PaginationEllipsis />
                         </PaginationItem>
                     }
 
                     {
-                        (currentPage + 2 < count || currentPage === count - 2) &&
+                        (currentPage + 2 < pages || currentPage === pages - 2) &&
                         <PaginationItem>
-                            <PaginationLink onClick={() => {onChangePage("left", count)}} href="#">{count}</PaginationLink>
+                            <PaginationLink onClick={() => {onChangePage("left", pages)}} href="#">{pages}</PaginationLink>
                         </PaginationItem>
                     }
 
                 </div>
 
-                {currentPage !== count ? <PaginationNext className="justify-self-end-safe cursor-pointer" onClick={() => onChangePage("left")}/> : <div></div>}
+                {currentPage !== pages ? <PaginationNext className="justify-self-end-safe cursor-pointer" onClick={() => onChangePage("left")}/> : <div></div>}
             </PaginationContent>
         </Pagination>
     );
 };
+
+export default IssueTablePagination;

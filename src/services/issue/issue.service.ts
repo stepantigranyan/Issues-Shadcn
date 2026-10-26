@@ -1,4 +1,4 @@
-import {type FindAndCountIssues, type IssueRepositoryTypes} from "@/repositories/issue/issue.repository.ts";
+import {type IssueRepositoryTypes} from "@/repositories/issue/issue.repository.ts";
 import type {Issue, IssueAttributes} from "@/models/issue/issue.type.ts";
 import type {Label} from "@/models/label/label.type.ts";
 
@@ -13,18 +13,12 @@ export class IssueService {
         return this.issueRepository.create(data, labels);
     }
 
-    getAll(): Issue[] {
-        return this.issueRepository.getAll();
+    getAll(sortBy: 'ASC' | 'DESC' | undefined): Issue[] {
+        return this.issueRepository.getAll(sortBy);
     }
 
-
-    getAllAndCount(): FindAndCountIssues {
-        return this.issueRepository.getAllAndCount();
-    }
-
-
-    update(id: string, data: IssueAttributes, labels: Label[]): Issue | undefined {
-        return this.issueRepository.update(id, data, labels);
+    update(iss: Issue): Issue | undefined {
+        return this.issueRepository.update(iss.id, {title: iss.title, description: iss.description}, iss.labels);
     }
 
     delete(id: string): void {

@@ -4,29 +4,36 @@ import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea.tsx";
 import {Checkbox} from "@/components/ui/checkbox";
-import Popup from "@/components/popups/popups.tsx";
 
 import {
     Field,
     FieldGroup,
     FieldLabel,
-    FieldLegend,
-    FieldSeparator,
-    FieldSet, FieldTitle,
+    FieldTitle,
 } from "@/components/ui/field";
 
 import {labelService} from "@/services/service.ts";
 import type {Label} from "@/models/label/label.type.ts";
 import type {IssueAttributes} from "@/models/issue/issue.type.ts";
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger
+} from "@/components/ui/dialog.tsx";
+import {Label as Lb} from "@/components/ui/label.tsx";
 
 export interface AddIssuePopupProps {
-    onClose: () => void;
     onSubmit: (data: IssueAttributes, labels: Label[]) => void;
 }
 
-const AddIssuePopup: FC<AddIssuePopupProps> = ({onClose, onSubmit}) => {
+const AddIssuePopup: FC<AddIssuePopupProps> = ({onSubmit}) => {
     const allLabels = labelService.getAll();
     const [checkedLabels, setCheckedLabels] = useState<Label[]>([]);
+    const [open, setOpen] = useState<boolean>(false);
 
     const handleToggleLabel = (id: string) => {
         const checkBoxIndex = checkedLabels.findIndex(item => item.id === id);
@@ -41,66 +48,49 @@ const AddIssuePopup: FC<AddIssuePopupProps> = ({onClose, onSubmit}) => {
     const handleSubmit = (formData: FormData) => {
         const title = formData.get("title")! as string;
         const description = formData.get("description")! as string;
-
         onSubmit({title, description}, checkedLabels);
-        onClose()
+        setOpen(false);
     }
 
 
     return (
-        <Popup onCancel={onClose}>
-            <form action={handleSubmit}>
-                <FieldGroup>
-                    <FieldSet>
-                        <FieldLegend className="font-bold text-3xl">Add new Issue</FieldLegend>
-                        <FieldSeparator/>
-                        <FieldGroup className="my-5">
-                            <Field>
-                                <FieldLabel htmlFor="issue-title">
-                                    Add title
-                                </FieldLabel>
-                                <Input
-                                    name="title"
-                                    id="issue-title"
-                                    placeholder="Bug report"
-                                    required
-                                />
-                            </Field>
-                            <Field>
-                                <FieldLabel htmlFor="issue-description">
-                                    Add Description
-                                </FieldLabel>
-                                <Textarea
-                                    name="description"
-                                    id="issue-description"
-                                    placeholder="Describe a bug"
-                                    required
-                                    className="resize-none min-h-50 overflow-y-scroll-auto field-sizing-fixed"
-                                />
-                            </Field>
-                            <Field className="flex flex-col gap-y-5">
-                                <FieldTitle>Choose Labels</FieldTitle>
-                                <FieldGroup className="grid grid-cols-2">
-                                    {allLabels.map(({id, name}) => (
-                                        <Field orientation="horizontal" key={id}>
-                                            <Checkbox id={id} defaultChecked={false} onCheckedChange={() => {handleToggleLabel(id)}}/>
-                                            <FieldLabel className="text-xs capitalize" htmlFor={id}>{name}</FieldLabel>
-                                        </Field>
-                                    ))}
-                                </FieldGroup>
-                            </Field>
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger render={<Button variant={'outline'}>New Issue</Button>}/>
+            <DialogContent className={'flex flex-col gap-y-10'}>
+                <DialogHeader>
+                    <DialogTitle>Edit Issue</DialogTitle>
+                </DialogHeader>
+                <form action={handleSubmit} className={'flex flex-col gap-y-5'}>
+                    <FieldGroup>
+                        <Field>
+                            <Lb htmlFor="title">Title</Lb>
+                            <Input id="title" name="title" placeholder={'Bug report'} required={true}/>
+                        </Field>
+                        <Field>
+                            <Lb htmlFor="description">Description</Lb>
+                            <Textarea id="description" name="description" className={'h-32 overflow-y-auto resize-none'}/>
+                        </Field>
+                    </FieldGroup>
+                    <FieldGroup>
+                        <FieldTitle>Choose Labels</FieldTitle>
+                        <FieldGroup className="grid grid-cols-2">
+                            {allLabels.map(({id, name}) => (
+                                <Field orientation="horizontal" key={id}>
+                                    <Checkbox id={id} defaultChecked={false} onCheckedChange={() => {handleToggleLabel(id)}}/>
+                                    <FieldLabel className="text-xs capitalize" htmlFor={id}>{name}</FieldLabel>
+                                </Field>
+                            ))}
                         </FieldGroup>
-                    </FieldSet>
-                    <FieldSeparator/>
-                    <Field orientation="horizontal">
-                        <Button type="submit">Add</Button>
-                        <Button variant="outline" type="button" onClick={onClose}>
-                            Cancel
-                        </Button>
-                    </Field>
-                </FieldGroup>
-            </form>
-        </Popup>
+                    </FieldGroup>
+                    <DialogFooter className={'mt-5'}>
+                        <Field>
+                            <DialogClose render={<Button variant="outline">Cancel</Button>} />
+                            <Button type="submit">Add</Button>
+                        </Field>
+                    </DialogFooter>
+                </form>
+            </DialogContent>
+        </Dialog>
     );
 };
 
