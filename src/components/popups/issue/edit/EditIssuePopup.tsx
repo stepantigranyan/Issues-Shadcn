@@ -1,31 +1,38 @@
-import {type FC, memo, useState} from "react";
+import {type FC, useState} from "react";
 
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea.tsx";
 import {Checkbox} from "@/components/ui/checkbox";
-import Popup from "@/components/popups/popups.tsx";
+import { Label as Lb } from "@/components/ui/label"
 
 import {
     Field,
-    FieldGroup,
-    FieldLabel,
-    FieldLegend,
-    FieldSeparator,
-    FieldSet, FieldTitle,
+    FieldGroup, FieldLabel, FieldTitle,
 } from "@/components/ui/field";
+
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
+
 
 import {labelService} from "@/services/service.ts";
 import type {Label} from "@/models/label/label.type.ts";
-import type {Issue, IssueAttributes} from "@/models/issue/issue.type.ts";
+import type {Issue} from "@/models/issue/issue.type.ts";
 
 export interface AddIssuePopupProps {
-    onClose: () => void;
-    onSubmit: (id: string, data: IssueAttributes, labels: Label[]) => void;
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+    onSubmit: (issue: Issue) => void;
     data: Issue;
 }
 
-const EditIssuePopup: FC<AddIssuePopupProps> = ({onClose, onSubmit, data}) => {
+const EditIssuePopup: FC<AddIssuePopupProps> = ({onSubmit, data, open, onOpenChange}) => {
     const allLabels = labelService.getAll();
     const [checkedLabels, setCheckedLabels] = useState<Label[]>(data.labels);
 
@@ -42,69 +49,48 @@ const EditIssuePopup: FC<AddIssuePopupProps> = ({onClose, onSubmit, data}) => {
     const handleSubmit = (formData: FormData) => {
         const title = formData.get("title")! as string;
         const description = formData.get("description")! as string;
-
-        onSubmit(data.id, {title, description}, checkedLabels);
-        onClose()
+        onSubmit({id: data.id, title, description, labels: checkedLabels, created: data.created});
+        onOpenChange(false);
     };
 
-
     return (
-        <Popup onCancel={onClose}>
-            <form action={handleSubmit}>
-                <FieldGroup>
-                    <FieldSet>
-                        <FieldLegend className="font-bold text-3xl">Edit Issue</FieldLegend>
-                        <FieldSeparator/>
-                        <FieldGroup className="my-5">
+        <Dialog open={open} onOpenChange={onOpenChange}>
+                <DialogContent className={'flex flex-col gap-y-10'}>
+                    <DialogHeader>
+                        <DialogTitle>Edit Issue</DialogTitle>
+                    </DialogHeader>
+                    <form action={handleSubmit} className={'flex flex-col gap-y-5'}>
+                        <FieldGroup>
                             <Field>
-                                <FieldLabel htmlFor="issue-title">
-                                    Edit Title
-                                </FieldLabel>
-                                <Input
-                                    name="title"
-                                    id="issue-title"
-                                    placeholder="Bug report"
-                                    defaultValue={data.title}
-                                    required
-                                />
+                                <Lb htmlFor="title">Title</Lb>
+                                <Input id="title" name="title" defaultValue={data.title} />
                             </Field>
                             <Field>
-                                <FieldLabel htmlFor="issue-description">
-                                    Edit Description
-                                </FieldLabel>
-                                <Textarea
-                                    name="description"
-                                    id="issue-description"
-                                    placeholder="Describe a bug"
-                                    required
-                                    className="resize-none min-h-50 overflow-y-scroll-auto field-sizing-fixed"
-                                    defaultValue={data.description}
-                                />
-                            </Field>
-                            <Field className="flex flex-col gap-y-5">
-                                <FieldTitle>Choose Labels</FieldTitle>
-                                <FieldGroup className="grid grid-cols-2">
-                                    {allLabels.map(({id, name}) => (
-                                        <Field orientation="horizontal" key={id}>
-                                            <Checkbox id={id} defaultChecked={Boolean(data.labels.find((x) => x.id === id))} onCheckedChange={() => {handleToggleLabel(id)}}/>
-                                            <FieldLabel className="text-xs capitalize" htmlFor={id}>{name}</FieldLabel>
-                                        </Field>
-                                    ))}
-                                </FieldGroup>
+                                <Lb htmlFor="description">Description</Lb>
+                                <Textarea id="description" name="description" defaultValue={data.description} className={'h-32 overflow-y-auto resize-none'}/>
                             </Field>
                         </FieldGroup>
-                    </FieldSet>
-                    <FieldSeparator/>
-                    <Field orientation="horizontal">
-                        <Button type="submit">Edit</Button>
-                        <Button variant="outline" type="button" onClick={onClose}>
-                            Cancel
-                        </Button>
-                    </Field>
-                </FieldGroup>
-            </form>
-        </Popup>
+                        <FieldGroup>
+                            <FieldTitle>Choose Labels</FieldTitle>
+                            <FieldGroup className="grid grid-cols-2">
+                                {allLabels.map(({id, name}) => (
+                                    <Field orientation="horizontal" key={id}>
+                                        <Checkbox id={id} defaultChecked={Boolean(data.labels.find((x) => x.id === id))} onCheckedChange={() => {handleToggleLabel(id)}}/>
+                                        <FieldLabel className="text-xs capitalize" htmlFor={id}>{name}</FieldLabel>
+                                    </Field>
+                                ))}
+                            </FieldGroup>
+                        </FieldGroup>
+                        <DialogFooter className={'mt-5'}>
+                            <Field>
+                                <DialogClose render={<Button variant="outline">Cancel</Button>} />
+                                <Button type="submit">Save changes</Button>
+                            </Field>
+                        </DialogFooter>
+                    </form>
+                </DialogContent>
+        </Dialog>
     );
 };
 
-export default memo(EditIssuePopup);
+export default EditIssuePopup;

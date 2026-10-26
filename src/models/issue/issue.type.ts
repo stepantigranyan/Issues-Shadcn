@@ -8,4 +8,5 @@ export interface IssueAttributes {
 export interface Issue extends IssueAttributes {
     id: string;
     labels: Label[];
+    created: number;
 }

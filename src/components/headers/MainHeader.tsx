@@ -7,34 +7,25 @@ import {
     ItemTitle,
 } from "@/components/ui/item";
 
-import {Button} from "@/components/ui/button.tsx";
+import type {IssueAttributes} from "@/models/issue/issue.type.ts";
+import type {Label} from "@/models/label/label.type.ts";
+
+import AddIssuePopup from "@/components/popups/issue/add/AddIssuePopup.tsx";
+import AddLabelPopup from "@/components/popups/label/add/AddLabelPopup.tsx";
 
 export interface MainHeaderProps {
-    onAddIssue: () => void;
-    onAddLabel: () => void;
+    onAddIssue: (data: IssueAttributes, labels: Label[]) => void;
 }
 
-const MainHeader: FC<MainHeaderProps> = ({onAddIssue, onAddLabel}) => {
+const MainHeader: FC<MainHeaderProps> = ({onAddIssue}) => {
     return (
         <Item variant="default" className="px-0">
             <ItemContent>
                 <ItemTitle className={"text-2xl font-bold"}>Issues</ItemTitle>
             </ItemContent>
             <ItemActions>
-                <Button
-                    variant="outline"
-                    size="lg"
-                    className="cursor-pointer"
-                    onClick={onAddIssue}
-                >
-                    New Issue
-                </Button>
-                <Button
-                    variant="outline"
-                    size="lg"
-                    className="cursor-pointer"
-                    onClick={onAddLabel}
-                >New Label</Button>
+                <AddIssuePopup onSubmit={onAddIssue} />
+                <AddLabelPopup />
             </ItemActions>
         </Item>
     );
