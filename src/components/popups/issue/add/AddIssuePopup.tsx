@@ -58,7 +58,7 @@ const AddIssuePopup: FC<AddIssuePopupProps> = ({onSubmit}) => {
             <DialogTrigger render={<Button variant={'outline'} className={'cursor-pointer'}>New Issue</Button>}/>
             <DialogContent showCloseButton={false} className={'flex flex-col gap-y-10'}>
                 <DialogHeader>
-                    <DialogTitle>Edit Issue</DialogTitle>
+                    <DialogTitle>Add Issue</DialogTitle>
                 </DialogHeader>
                 <form action={handleSubmit} className={'flex flex-col gap-y-5'}>
                     <FieldGroup>
@@ -68,7 +68,7 @@ const AddIssuePopup: FC<AddIssuePopupProps> = ({onSubmit}) => {
                         </Field>
                         <Field>
                             <Lb htmlFor="description">Description</Lb>
-                            <Textarea id="description" name="description" className={'h-32 overflow-y-auto resize-none'}/>
+                            <Textarea id="description" name="description" placeholder={'Describe the bug '} className={'h-32 overflow-y-auto resize-none'}/>
                         </Field>
                     </FieldGroup>
                     <FieldGroup>

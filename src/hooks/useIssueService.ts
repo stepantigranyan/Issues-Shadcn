@@ -15,6 +15,7 @@ const useIssueService = (service: IssueService) => {
     const loadIssues = useCallback(() => {
         try {
             setLoading(true);
+            setCurrentPage(1);
             const allIssues = service.getAll(sortBy);
             setIssues(allIssues);
             const offsetIssues = allIssues.slice(0, VISIBLE_ISSUES_COUNT);
@@ -34,7 +35,6 @@ const useIssueService = (service: IssueService) => {
         try {
             setLoading(true);
             setCurrentPage(1);
-            console.log(labels);
             const issue = service.create(data, labels);
             setIssues((prev) => [issue, ...prev]);
 
@@ -42,14 +42,23 @@ const useIssueService = (service: IssueService) => {
 
             setVisibleIssues({pages: Math.ceil((issues.length + 1) / VISIBLE_ISSUES_COUNT), data: offsetIssues});
         } finally {
-            setLoading(false);
+            setTimeout(() => {
+                setLoading(false)
+            }, 500);
         }
     }, [issues, service]);
 
     const editIssue = useCallback((iss: Issue) => {
-        const issue = service.update(iss)!;
-        setIssues((prev) => prev.map((x) => x.id === iss.id ? issue : x));
-        setVisibleIssues((prev) => ({data: prev.data.map((x) => x.id === iss.id ? issue : x), pages: prev.pages}));
+        try {
+            setLoading(true);
+            const issue = service.update(iss)!;
+            setIssues((prev) => prev.map((x) => x.id === iss.id ? issue : x));
+            setVisibleIssues((prev) => ({data: prev.data.map((x) => x.id === iss.id ? issue : x), pages: prev.pages}));
+        } finally {
+            setTimeout(() => {
+                setLoading(false)
+            }, 500)
+        }
     }, [service]);
 
     const deleteIssue = useCallback((id: string) => {

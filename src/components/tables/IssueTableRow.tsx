@@ -27,7 +27,7 @@ const IssueTableRow: FC<IIssueTableRowProps> = ({issue, onEdit, onDelete}) => {
     const [openDelete, setOpenDelete] = useState<boolean>(false);
 
     return (
-        <TableRow className="w-full flex items-center justify-between h-35 hover:bg-transparent" key={issue.id}>
+        <TableRow className="w-full flex items-center justify-between h-1/3 hover:bg-transparent" key={issue.id}>
             <TableCell>
                 <Item>
                     <ItemContent>

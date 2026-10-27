@@ -22,7 +22,6 @@ const IssueTableSearch: FC<IssuesTableSearchProps> = ({onSort, onSearch, onReset
     const ref = useRef<HTMLInputElement | null>(null);
 
     const handleSubmit = async (input: string) => {
-        console.log(input);
         onSearch(input);
     }
 
@@ -63,7 +62,7 @@ const IssueTableSearch: FC<IssuesTableSearchProps> = ({onSort, onSearch, onReset
         const {value} = event.currentTarget;
         setName(value);
         debSearch(value);
-    }, []);
+    }, [ascSort, descSort]);
 
     const handleSearchButtonClick = () => {
         ref.current?.focus();

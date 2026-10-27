@@ -33,7 +33,7 @@ const AddLabelPopup: FC = () => {
     return (
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger render={<Button variant="outline" size="lg" className="cursor-pointer">New Label</Button>}/>
-                <DialogContent>
+                <DialogContent showCloseButton={false}>
                     <form action={handleSubmit} className={'flex flex-col gap-y-5'}>
                         <FieldGroup>
                             <FieldSet>

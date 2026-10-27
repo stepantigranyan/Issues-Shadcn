@@ -4,7 +4,6 @@ export const debounce = (fn: Function, delay: number) => {
 
         clearTimeout(timeout);
         timeout = setTimeout(() => {
-            console.log(args, 'args')
             fn(...args);
         }, delay);
     }

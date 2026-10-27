@@ -39,7 +39,7 @@ const InfoIssuePopup: FC<InfoIssuePopupProps> = ({data}) => {
                     </div>
                 </DialogHeader>
                 <div className="-mx-4 no-scrollbar max-h-[50vh] overflow-y-auto px-4">
-                    <p className="mb-4 leading-normal">
+                    <p className="mb-4 leading-normal whitespace-pre-wrap break-all">
                         {data.description}
                     </p>
                 </div>
