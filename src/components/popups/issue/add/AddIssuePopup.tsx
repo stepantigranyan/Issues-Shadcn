@@ -55,8 +55,8 @@ const AddIssuePopup: FC<AddIssuePopupProps> = ({onSubmit}) => {
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger render={<Button variant={'outline'}>New Issue</Button>}/>
-            <DialogContent className={'flex flex-col gap-y-10'}>
+            <DialogTrigger render={<Button variant={'outline'} className={'cursor-pointer'}>New Issue</Button>}/>
+            <DialogContent showCloseButton={false} className={'flex flex-col gap-y-10'}>
                 <DialogHeader>
                     <DialogTitle>Edit Issue</DialogTitle>
                 </DialogHeader>

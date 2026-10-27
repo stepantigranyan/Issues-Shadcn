@@ -10,12 +10,20 @@ const useIssueService = (service: IssueService) => {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [visibleIssues, setVisibleIssues] = useState<FindAndCountIssues>({data: [], pages: 0});
     const [sortBy, setSortBy] = useState<'ASC' | 'DESC' | undefined>(undefined);
+    const [loading, setLoading] = useState<boolean>(false);
 
     const loadIssues = useCallback(() => {
-        const allIssues = service.getAll(sortBy);
-        setIssues(allIssues);
-        const offsetIssues = allIssues.slice(0, VISIBLE_ISSUES_COUNT);
-        setVisibleIssues({pages: Math.ceil(allIssues.length / VISIBLE_ISSUES_COUNT), data: offsetIssues});
+        try {
+            setLoading(true);
+            const allIssues = service.getAll(sortBy);
+            setIssues(allIssues);
+            const offsetIssues = allIssues.slice(0, VISIBLE_ISSUES_COUNT);
+            setVisibleIssues({pages: Math.ceil(allIssues.length / VISIBLE_ISSUES_COUNT), data: offsetIssues});
+        } finally {
+            setTimeout(() => {
+                setLoading(false);
+            }, 1000);
+        }
     }, [service, sortBy]);
 
     useLayoutEffect(() => {
@@ -23,13 +31,19 @@ const useIssueService = (service: IssueService) => {
     }, []);
 
     const addIssue = useCallback((data: IssueAttributes, labels: Label[]) => {
-        setCurrentPage(1);
-        const issue = service.create(data, labels);
-        setIssues((prev) => [issue, ...prev]);
+        try {
+            setLoading(true);
+            setCurrentPage(1);
+            console.log(labels);
+            const issue = service.create(data, labels);
+            setIssues((prev) => [issue, ...prev]);
 
-        const offsetIssues = ([issue, ...issues]).slice(0, VISIBLE_ISSUES_COUNT);
+            const offsetIssues = ([issue, ...issues]).slice(0, VISIBLE_ISSUES_COUNT);
 
-        setVisibleIssues({pages: Math.ceil((issues.length + 1) / VISIBLE_ISSUES_COUNT), data: offsetIssues})
+            setVisibleIssues({pages: Math.ceil((issues.length + 1) / VISIBLE_ISSUES_COUNT), data: offsetIssues});
+        } finally {
+            setLoading(false);
+        }
     }, [issues, service]);
 
     const editIssue = useCallback((iss: Issue) => {
@@ -39,94 +53,120 @@ const useIssueService = (service: IssueService) => {
     }, [service]);
 
     const deleteIssue = useCallback((id: string) => {
-        service.delete(id);
-        const newIssues = issues.filter((x) => x.id !== id);
-        setIssues(newIssues);
+        try {
+            setLoading(true);
+            service.delete(id);
+            const newIssues = issues.filter((x) => x.id !== id);
+            setIssues(newIssues);
 
-        if (visibleIssues.data.length === 1) {
-            if (visibleIssues.pages === 1) {
-                setIssues([]);
-                setVisibleIssues({data: [], pages: 0});
+            if (visibleIssues.data.length === 1) {
+                if (visibleIssues.pages === 1) {
+                    setIssues([]);
+                    setVisibleIssues({data: [], pages: 0});
+                    return;
+                }
+
+                const offset = VISIBLE_ISSUES_COUNT * (currentPage - 2);
+                const offsetIssues = newIssues.slice(offset, offset + VISIBLE_ISSUES_COUNT);
+
+                setCurrentPage((prev) => prev - 1);
+                setVisibleIssues({data: offsetIssues, pages: Math.ceil(newIssues.length / VISIBLE_ISSUES_COUNT)});
                 return;
             }
 
-            const offset = VISIBLE_ISSUES_COUNT * (currentPage - 2);
+            const offset = VISIBLE_ISSUES_COUNT * (currentPage - 1);
             const offsetIssues = newIssues.slice(offset, offset + VISIBLE_ISSUES_COUNT);
 
-            setCurrentPage((prev) => prev - 1);
             setVisibleIssues({data: offsetIssues, pages: Math.ceil(newIssues.length / VISIBLE_ISSUES_COUNT)});
-            return;
+        } finally {
+            setLoading(false);
         }
-
-        const offset = VISIBLE_ISSUES_COUNT * (currentPage - 1);
-        const offsetIssues = newIssues.slice(offset, offset + VISIBLE_ISSUES_COUNT);
-
-        setVisibleIssues({data: offsetIssues, pages: Math.ceil(newIssues.length / VISIBLE_ISSUES_COUNT)});
     }, [currentPage, issues, service, visibleIssues.data.length, visibleIssues.pages]);
 
     const changePage = useCallback((direction: "right" | "left", page?: number) => {
-        let offsetIssues;
-        let offset;
+        try {
+            setLoading(true);
+            let offsetIssues;
+            let offset;
 
-        if (page === undefined) {
-            if (direction === "left") {
-                setCurrentPage((prev) => prev + 1);
-                offset = (currentPage) * VISIBLE_ISSUES_COUNT;
+            if (page === undefined) {
+                if (direction === "left") {
+                    setCurrentPage((prev) => prev + 1);
+                    offset = (currentPage) * VISIBLE_ISSUES_COUNT;
+                } else {
+                    setCurrentPage((prev) => prev - 1);
+                    offset = (currentPage - 2) * VISIBLE_ISSUES_COUNT;
+                }
+
+
+                offsetIssues = issues.slice(offset, offset + VISIBLE_ISSUES_COUNT);
             } else {
-                setCurrentPage((prev) => prev - 1);
-                offset = (currentPage - 2) * VISIBLE_ISSUES_COUNT;
+                setCurrentPage(page);
+                const offset = (page - 1) * VISIBLE_ISSUES_COUNT;
+                offsetIssues = issues.slice(offset, offset + VISIBLE_ISSUES_COUNT);
             }
 
-
-            offsetIssues = issues.slice(offset, offset + VISIBLE_ISSUES_COUNT);
-        } else {
-            setCurrentPage(page);
-            const offset = (page - 1) * VISIBLE_ISSUES_COUNT;
-            offsetIssues = issues.slice(offset, offset + VISIBLE_ISSUES_COUNT);
+            setVisibleIssues({pages: Math.ceil(issues.length / VISIBLE_ISSUES_COUNT), data: offsetIssues});
+        } finally {
+            setTimeout(() => {
+                setLoading(false);
+            }, 200);
         }
-
-        setVisibleIssues({pages: Math.ceil(issues.length / VISIBLE_ISSUES_COUNT), data: offsetIssues});
     }, [currentPage, issues]);
 
 
     const sort = useCallback((type: "ASC" | "DESC" | undefined) => {
-        setSortBy(type);
-        let sortedData: Issue[];
-        
-        if (type === "ASC") {
-            sortedData = issues.sort((a, b) => a.title < b.title ? -1 : 1);
-        } else if (type === "DESC") {
-            sortedData = issues.sort((a, b) => b.title < a.title ? -1 : 1);
-        } else {
-            sortedData = issues.sort((a, b) => b.created  - a.created);
-        }
+       try {
+           setLoading(true);
+           setSortBy(type);
+           let sortedData: Issue[];
 
-        setIssues(sortedData!);
-        setVisibleIssues({pages: Math.ceil(sortedData!.length / VISIBLE_ISSUES_COUNT), data: sortedData!.slice(0, VISIBLE_ISSUES_COUNT)})
-        setCurrentPage(1);
+           if (type === "ASC") {
+               sortedData = issues.sort((a, b) => a.title < b.title ? -1 : 1);
+           } else if (type === "DESC") {
+               sortedData = issues.sort((a, b) => b.title < a.title ? -1 : 1);
+           } else {
+               sortedData = issues.sort((a, b) => b.created  - a.created);
+           }
+
+           setIssues(sortedData!);
+           setVisibleIssues({pages: Math.ceil(sortedData!.length / VISIBLE_ISSUES_COUNT), data: sortedData!.slice(0, VISIBLE_ISSUES_COUNT)})
+           setCurrentPage(1);
+       } finally {
+           setTimeout(() => {
+               setLoading(false);
+           }, 500)
+       }
     }, [issues]);
 
     const search = useCallback((input: string) => {
-        const searchedInput = input.toLowerCase().split(' ').join('');
-        const allIssues = [...service.getAll(sortBy)];
-        const searchedIssues = allIssues.filter((x) => {
-            const titleText = x.title.toLowerCase().split(" ").join('');
-            const descriptionText = x.description.toLowerCase().split(" ").join('');
+        try {
+            setLoading(true);
+            const searchedInput = input.toLowerCase().split(' ').join('');
+            const allIssues = [...service.getAll(sortBy)];
+            const searchedIssues = allIssues.filter((x) => {
+                const titleText = x.title.toLowerCase().split(" ").join('');
+                const descriptionText = x.description.toLowerCase().split(" ").join('');
 
-            return titleText.includes(searchedInput) || descriptionText.includes(searchedInput);
-        });
+                return titleText.includes(searchedInput) || descriptionText.includes(searchedInput);
+            });
 
-        if (searchedIssues.length === 0) {
-            return;
+            if (searchedIssues.length === 0) {
+                return;
+            }
+
+            const searchedOffsetIssues = searchedIssues.slice(0, VISIBLE_ISSUES_COUNT);
+
+            setIssues(searchedIssues);
+            setVisibleIssues({
+                data: searchedOffsetIssues,
+                pages: Math.ceil(searchedIssues.length / VISIBLE_ISSUES_COUNT),
+            });
+        } finally {
+            setTimeout(() => {
+                setLoading(false);
+            }, 500);
         }
-
-        const searchedOffsetIssues = searchedIssues.slice(0, VISIBLE_ISSUES_COUNT);
-
-        setIssues(searchedIssues);
-        setVisibleIssues({
-            data: searchedOffsetIssues,
-            pages: Math.ceil(searchedIssues.length / VISIBLE_ISSUES_COUNT),
-        });
     }, [service, sortBy]);
 
     const reset = useCallback(() => {
@@ -137,6 +177,7 @@ const useIssueService = (service: IssueService) => {
     return {
         visibleIssues,
         currentPage,
+        loading,
         loadIssues,
         addIssue,
         editIssue,

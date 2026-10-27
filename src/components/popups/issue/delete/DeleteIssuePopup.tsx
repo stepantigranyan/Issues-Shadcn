@@ -21,7 +21,7 @@ export interface DeleteIssuePopupProps {
 const DeleteIssuePopup: FC<DeleteIssuePopupProps> = ({onSubmit, data, open, onOpenChange}) => {
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent>
+            <DialogContent showCloseButton={false}>
                 <DialogHeader>
                     <DialogTitle>
                         Are you sure?

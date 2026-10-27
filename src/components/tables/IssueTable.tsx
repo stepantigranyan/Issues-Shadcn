@@ -10,6 +10,8 @@ import {
     ItemTitle,
 } from "@/components/ui/item";
 
+import {Skeleton} from '@/components/ui/skeleton';
+
 import IssueTablePagination from "@/components/paginations/IssueTablePagination.tsx";
 
 import {type FC, memo} from "react";
@@ -21,21 +23,43 @@ import IssueTableRow from "@/components/tables/IssueTableRow.tsx";
 export interface IssueTableProps {
     issues: FindAndCountIssues;
     currentPage: number;
+    loading: boolean;
     onChangePage: (direction: "right" | "left", page?: number) => void;
     onEdit: (issue: Issue) => void;
     onDelete: (id: string) => void;
 }
 
-const IssuesTable: FC<IssueTableProps> = ({issues, onDelete, onEdit, currentPage, onChangePage}) => {
+
+
+const IssuesTable: FC<IssueTableProps> = ({issues, loading, onDelete, onEdit, currentPage, onChangePage}) => {
     const {data, pages} = issues;
 
     return (
         <>
             <Table className="border border-gray-200 border-solid h-105 p-4">
                 <TableBody className="flex flex-col w-full">
-                    {data.map((issue) => (
-                        <IssueTableRow key={issue.id} issue={issue} onEdit={onEdit} onDelete={onDelete}/>
-                    ))}
+                    {loading ?
+                            <tr>
+                                <td className={'flex w-full gap-y-2 flex-col justify-center h-35 px-10'}>
+                                    <Skeleton className={'h-4 w-3/4'}/>
+                                    <Skeleton className={'h-4 w-1/2'}/>
+                                    <Skeleton className={'h-4 w-1/2'}/>
+                                </td>
+                                <td className={'flex w-full gap-y-2 flex-col justify-center h-35 px-10'}>
+                                    <Skeleton className={'h-4 w-3/4'}/>
+                                    <Skeleton className={'h-4 w-1/2'}/>
+                                    <Skeleton className={'h-4 w-1/2'}/>
+                                </td>
+                                <td className={'flex w-full gap-y-2 flex-col justify-center h-35 px-10'}>
+                                    <Skeleton className={'h-4 w-3/4'}/>
+                                    <Skeleton className={'h-4 w-1/2'}/>
+                                    <Skeleton className={'h-4 w-1/2'}/>
+                                </td>
+                            </tr>
+                        :
+                        data.map((issue) => (
+                            <IssueTableRow key={issue.id} issue={issue} onEdit={onEdit} onDelete={onDelete}/>
+                        ))}
                 </TableBody>
                 {
                     data.length  !== VISIBLE_ISSUES_COUNT && pages !== 1 &&

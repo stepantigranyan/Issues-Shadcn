@@ -6,7 +6,7 @@ import {MoveDown} from 'lucide-react';
 import {Button} from "@/components/ui/button.tsx";
 import {Input} from "@/components/ui/input";
 import {ItemTitle} from "@/components/ui/item.tsx";
-import {type ChangeEvent, type FC, memo, useState} from "react";
+import {type ChangeEvent, type FC, memo, useCallback, useRef, useState} from "react";
 import {debounce} from "@/utils/debounce";
 
 export interface IssuesTableSearchProps {
@@ -19,9 +19,11 @@ const IssueTableSearch: FC<IssuesTableSearchProps> = ({onSort, onSearch, onReset
     const [title, setName] = useState<string>('');
     const [ascSort, setAscSort] = useState<boolean>(false);
     const [descSort, setDescSort] = useState<boolean>(false);
+    const ref = useRef<HTMLInputElement | null>(null);
 
-    const handleSubmit = () => {
-        onSearch(title);
+    const handleSubmit = async (input: string) => {
+        console.log(input);
+        onSearch(input);
     }
 
     const debSearch = debounce(handleSubmit, 1000);
@@ -57,18 +59,21 @@ const IssueTableSearch: FC<IssuesTableSearchProps> = ({onSort, onSearch, onReset
         setDescSort(true);
     }
 
-    const handleInput = (event: ChangeEvent<HTMLInputElement>) => {
+    const handleInput = useCallback((event: ChangeEvent<HTMLInputElement>) => {
         const {value} = event.currentTarget;
         setName(value);
-        debSearch();
-    }
+        debSearch(value);
+    }, []);
 
+    const handleSearchButtonClick = () => {
+        ref.current?.focus();
+    }
 
     return (
         <div className="flex justify-between items-center w-full">
-            <form action={handleSubmit} className="flex items-center gap-x-2">
-                <Input value={title} onChange={handleInput} name="search" placeholder="Search..." />
-                <Button type="submit" className="cursor-pointer" size="icon"><Search/></Button>
+            <form className="flex items-center gap-x-2">
+                <Input ref={ref} value={title} onChange={handleInput} name="search" placeholder="Search..." />
+                <Button onClick={handleSearchButtonClick} className="cursor-pointer" size="icon"><Search/></Button>
                 <Button variant="outline" onClick={() => {
                     setName('');
                     onReset();

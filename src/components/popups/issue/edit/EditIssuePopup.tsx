@@ -55,7 +55,7 @@ const EditIssuePopup: FC<AddIssuePopupProps> = ({onSubmit, data, open, onOpenCha
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-                <DialogContent className={'flex flex-col gap-y-10'}>
+                <DialogContent showCloseButton={false} className={'flex flex-col gap-y-10'}>
                     <DialogHeader>
                         <DialogTitle>Edit Issue</DialogTitle>
                     </DialogHeader>

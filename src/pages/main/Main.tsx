@@ -6,7 +6,7 @@ import IssuesTable from "@/components/tables/IssueTable.tsx";
 import IssueTableSearch from "@/components/search/IssueTableSearch.tsx";
 
 const MainPage = () => {
-    const {visibleIssues, currentPage, addIssue, editIssue, deleteIssue, changePage, sort, search, reset} = useIssueService(issueService);
+    const {visibleIssues, currentPage, loading, addIssue, editIssue, deleteIssue, changePage, sort, search, reset} = useIssueService(issueService);
 
     return (
         <>
@@ -17,6 +17,7 @@ const MainPage = () => {
                 />
                 <IssueTableSearch onSort={sort} onSearch={search} onReset={reset}></IssueTableSearch>
                 <IssuesTable
+                    loading={loading}
                     issues={visibleIssues}
                     onEdit={editIssue}
                     onDelete={deleteIssue}
