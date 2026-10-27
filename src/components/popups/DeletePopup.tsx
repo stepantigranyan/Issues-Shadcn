@@ -1,8 +1,6 @@
-import {type FC, memo} from "react";
+import { type FC, type JSX } from "react";
 
-import {Button} from "@/components/ui/button";
-import type {Issue} from "@/models/issue/issue.type.ts";
-
+import { Button } from "@/components/ui/button";
 import {
     Dialog,
     DialogClose, DialogContent,
@@ -12,13 +10,14 @@ import {
 } from "@/components/ui/dialog";
 
 export interface DeleteIssuePopupProps {
-    data: Issue;
+    id: string;
     onSubmit: (id: string) => void;
     open: boolean;
     onOpenChange: (open: boolean) => void;
+    children?: JSX.Element;
 }
 
-const DeleteIssuePopup: FC<DeleteIssuePopupProps> = ({onSubmit, data, open, onOpenChange}) => {
+const DeletePopup: FC<DeleteIssuePopupProps> = ({onSubmit, id, open, onOpenChange, children}) => {
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent showCloseButton={false}>
@@ -27,13 +26,16 @@ const DeleteIssuePopup: FC<DeleteIssuePopupProps> = ({onSubmit, data, open, onOp
                         Are you sure?
                     </DialogTitle>
                 </DialogHeader>
+                {
+                    children
+                }
                 <DialogFooter>
-                    <Button onClick={() => onSubmit(data.id)} variant="destructive">Delete</Button>
-                    <DialogClose render={<Button variant={"outline"}>Cancel</Button>}></DialogClose>
+                    <Button onClick={() => onSubmit(id)} variant="destructive">Delete</Button>
+                    <DialogClose render={<Button variant="outline">Cancel</Button>}></DialogClose>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
     );
 };
 
-export default  memo(DeleteIssuePopup);
+export default  DeletePopup;

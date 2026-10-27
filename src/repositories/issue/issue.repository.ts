@@ -1,7 +1,5 @@
 import type {Issue, IssueAttributes} from "@/models/issue/issue.type.ts";
-import type {Label} from "@/models/label/label.type.ts";
 import {generateId} from "@/utils/generateId";
-import {VISIBLE_ISSUES_COUNT} from "@/consts";
 
 export interface FindAndCountIssues {
     data: Issue[];
@@ -9,43 +7,33 @@ export interface FindAndCountIssues {
 }
 
 export interface IssueRepositoryTypes {
-    create: (data: IssueAttributes, labels: Label[]) => Issue;
+    create: (title: string, description: string, labels: string[]) => Issue;
     getAll: (sortBy: "ASC" | "DESC" | undefined) => Issue[];
-    getAllAndCount: () => FindAndCountIssues;
     getOne: (id: string) => Issue | undefined;
-    update: (id: string, data: IssueAttributes, labels: Label[]) => Issue | undefined;
+    update: (id: string, data: IssueAttributes, labels: string[]) => Issue | undefined;
     delete: (id: string) => void;
 }
 
-const STORAGE_KEY = "issues";
+export const ISSUES_STORAGE_KEY = "issues";
 
 export class IssueRepository implements IssueRepositoryTypes {
-    create(data: IssueAttributes, labels: Label[]): Issue {
+    create(title: string, description: string, labels: string[]): Issue {
         const issues = this.getAll(undefined);
 
         const issue: Issue = {
             id: generateId(5),
             labels: labels,
             created: new Date().getTime(),
-            ...data
+            title,
+            description,
         };
 
-        localStorage.setItem(STORAGE_KEY, JSON.stringify([issue, ...issues]));
+        localStorage.setItem(ISSUES_STORAGE_KEY, JSON.stringify([issue, ...issues]));
         return issue;
     }
 
-    getAllAndCount(): FindAndCountIssues {
-        const issues = this.getAll(undefined);
-
-        if (!issues) {
-            return ({data: [], pages: 1});
-        }
-
-        return ({data: issues, pages: Math.ceil(issues.length / VISIBLE_ISSUES_COUNT)});
-    };
-
     getAll(sortBy: "ASC" | "DESC" | undefined): Issue[] {
-        const data = localStorage.getItem(STORAGE_KEY);
+        const data = localStorage.getItem(ISSUES_STORAGE_KEY);
 
         if (!data) {
             return [] as Issue[];
@@ -72,7 +60,7 @@ export class IssueRepository implements IssueRepositoryTypes {
         return issues.find(x => x.id === id);
     }
 
-    update(id: string, data: IssueAttributes, labels: Label[]): Issue | undefined {
+    update(id: string, data: IssueAttributes, labels: string[]): Issue | undefined {
         const issues = this.getAll(undefined);
         const issueIndex = issues.findIndex(x => x.id === id);
 
@@ -81,7 +69,7 @@ export class IssueRepository implements IssueRepositoryTypes {
         }
 
         issues[issueIndex] = {...issues[issueIndex], ...data, labels: labels};
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(issues));
+        localStorage.setItem(ISSUES_STORAGE_KEY, JSON.stringify(issues));
 
         return issues[issueIndex];
     }
@@ -91,7 +79,7 @@ export class IssueRepository implements IssueRepositoryTypes {
         const deletedIssue = issues.find(x => x.id === id);
 
         if (deletedIssue) {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(issues.filter(x => x.id !== id)));
+            localStorage.setItem(ISSUES_STORAGE_KEY, JSON.stringify(issues.filter(x => x.id !== id)));
         }
     }
 }

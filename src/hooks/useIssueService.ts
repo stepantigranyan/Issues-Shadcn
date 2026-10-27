@@ -1,7 +1,6 @@
 import {useState, useLayoutEffect, useCallback} from "react";
 import type {IssueService} from "../services/issue/issue.service.ts";
 import type {Issue, IssueAttributes} from "../models/issue/issue.type.ts";
-import type {Label} from "../models/label/label.type.ts";
 import {VISIBLE_ISSUES_COUNT} from "@/consts";
 import type {FindAndCountIssues} from "@/repositories/issue/issue.repository.ts";
 
@@ -11,6 +10,7 @@ const useIssueService = (service: IssueService) => {
     const [visibleIssues, setVisibleIssues] = useState<FindAndCountIssues>({data: [], pages: 0});
     const [sortBy, setSortBy] = useState<'ASC' | 'DESC' | undefined>(undefined);
     const [loading, setLoading] = useState<boolean>(false);
+    const [notFound, setNotFound] = useState<boolean>(false);
 
     const loadIssues = useCallback(() => {
         try {
@@ -31,11 +31,11 @@ const useIssueService = (service: IssueService) => {
         loadIssues();
     }, []);
 
-    const addIssue = useCallback((data: IssueAttributes, labels: Label[]) => {
+    const addIssue = useCallback((title: string, description: string, labels: string[]) => {
         try {
             setLoading(true);
             setCurrentPage(1);
-            const issue = service.create(data, labels);
+            const issue = service.create(title, description, labels);
             setIssues((prev) => [issue, ...prev]);
 
             const offsetIssues = ([issue, ...issues]).slice(0, VISIBLE_ISSUES_COUNT);
@@ -150,6 +150,7 @@ const useIssueService = (service: IssueService) => {
 
     const search = useCallback((input: string) => {
         try {
+            setNotFound(false);
             setLoading(true);
             const searchedInput = input.toLowerCase().split(' ').join('');
             const allIssues = [...service.getAll(sortBy)];
@@ -161,6 +162,7 @@ const useIssueService = (service: IssueService) => {
             });
 
             if (searchedIssues.length === 0) {
+                setNotFound(true);
                 return;
             }
 
@@ -178,15 +180,12 @@ const useIssueService = (service: IssueService) => {
         }
     }, [service, sortBy]);
 
-    const reset = useCallback(() => {
-        setSortBy(undefined);
-        loadIssues();
-    }, [loadIssues]);
 
     return {
         visibleIssues,
         currentPage,
         loading,
+        notFound,
         loadIssues,
         addIssue,
         editIssue,
@@ -194,7 +193,6 @@ const useIssueService = (service: IssueService) => {
         changePage,
         sort,
         search,
-        reset
     }
 };
 

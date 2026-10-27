@@ -12,16 +12,16 @@ export class LabelService {
         return this.labelRepository.create(data);
     }
 
-    getAll(): Label[] {
-        return this.labelRepository.getAll();
+    getAll(sortBy: 'ASC' | 'DESC' | undefined): Label[] {
+        return this.labelRepository.getAll(sortBy);
     }
 
     getOne(id: string): Label | undefined {
         return this.labelRepository.getOne(id);
     }
 
-    update(id: string, data: LabelAttributes): Label {
-        return this.labelRepository.update(id, data);
+    update(lb: Label): Label {
+        return this.labelRepository.update(lb.id, {name: lb.name, color: lb.color});
     }
 
     delete(id: string): void {

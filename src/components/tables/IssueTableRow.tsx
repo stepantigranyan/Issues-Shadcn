@@ -1,20 +1,24 @@
-import {type FC, memo, useState} from 'react';
+import { type FC, memo, useState } from 'react';
 
-import {TableCell, TableRow} from "@/components/ui/table.tsx";
-import {Item, ItemContent, ItemDescription} from "@/components/ui/item.tsx";
-import InfoIssuePopup from "@/components/popups/issue/info/InfoIssuePopup.tsx";
-import {Badge} from "@/components/ui/badge.tsx";
+import { MoreHorizontalIcon } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { TableCell, TableRow } from "@/components/ui/table";
+import { Item, ItemContent, ItemDescription } from "@/components/ui/item";
+import { Badge } from "@/components/ui/badge";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem, DropdownMenuSeparator,
     DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu.tsx";
-import {Button} from "@/components/ui/button.tsx";
-import {MoreHorizontalIcon} from "lucide-react";
-import EditIssuePopup from "@/components/popups/issue/edit/EditIssuePopup.tsx";
-import type {Issue} from "@/models/issue/issue.type.ts";
-import DeleteIssuePopup from "@/components/popups/issue/delete/DeleteIssuePopup.tsx";
+} from "@/components/ui/dropdown-menu";
+
+import EditIssuePopup from "@/components/popups/issue/edit/EditIssuePopup";
+import InfoIssuePopup from "@/components/popups/issue/info/InfoIssuePopup";
+import DeletePopup from "@/components/popups/DeletePopup";
+
+import { labelService } from "@/services/service";
+import type { Issue } from "@/models/issue/issue.type";
 
 export interface IIssueTableRowProps {
     issue: Issue;
@@ -34,9 +38,10 @@ const IssueTableRow: FC<IIssueTableRowProps> = ({issue, onEdit, onDelete}) => {
                         <div className="flex items-center gap-x-3">
                             <InfoIssuePopup data={issue} />
                             <div className="flex items-center gap-x-2">
-                                {issue.labels.map((label) => (
-                                    <Badge key={label.id} variant="default" style={{backgroundColor: label.color}}>{label.name}</Badge>
-                                ))}
+                                {issue.labels.map((label) => {
+                                    const labelData = labelService.getOne(label)!;
+                                    return (<Badge key={labelData.id} variant="default" style={{backgroundColor: labelData.color}}>{labelData.name}</Badge>)
+                                })}
                             </div>
                         </div>
                         <ItemDescription className="w-2/3 whitespace-pre-wrap break-all line-clamp-3">{issue.description}</ItemDescription>
@@ -51,7 +56,9 @@ const IssueTableRow: FC<IIssueTableRowProps> = ({issue, onEdit, onDelete}) => {
                             e.preventDefault();
                             setOpenDelete(false);
                             setOpenEdit(true);
-                        }}>Edit</DropdownMenuItem>
+                        }}>
+                            Edit
+                        </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={(e) => {
                             e.preventDefault();
@@ -63,7 +70,7 @@ const IssueTableRow: FC<IIssueTableRowProps> = ({issue, onEdit, onDelete}) => {
                     </DropdownMenuContent>
                 </DropdownMenu>
                 <EditIssuePopup onOpenChange={setOpenEdit} open={openEdit} onSubmit={onEdit} data={issue} />
-                <DeleteIssuePopup onOpenChange={setOpenDelete} open={openDelete} onSubmit={onDelete} data={issue}/>
+                <DeletePopup onOpenChange={setOpenDelete} open={openDelete} onSubmit={onDelete} id={issue.id}/>
             </TableCell>
         </TableRow>
     )

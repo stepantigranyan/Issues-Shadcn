@@ -1,3 +1,5 @@
+import type {FC} from "react";
+
 import {
     Pagination, PaginationContent,
     PaginationEllipsis,
@@ -6,7 +8,6 @@ import {
     PaginationNext,
     PaginationPrevious,
 } from "@/components/ui/pagination";
-import type {FC} from "react";
 
 export interface IssuesTablePaginationProps {
     pages: number;
@@ -14,7 +15,7 @@ export interface IssuesTablePaginationProps {
     onChangePage: (direction: "right" | "left", page?: number) => void;
 }
 
-const IssueTablePagination: FC<IssuesTablePaginationProps> = ({pages, onChangePage, currentPage}) => {
+const TablePagination: FC<IssuesTablePaginationProps> = ({pages, onChangePage, currentPage}) => {
     return (
         <Pagination>
             <PaginationContent className="grid grid-cols-[100px_300px_100px]">
@@ -77,4 +78,4 @@ const IssueTablePagination: FC<IssuesTablePaginationProps> = ({pages, onChangePa
     );
 };
 
-export default IssueTablePagination;
+export default TablePagination;

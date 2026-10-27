@@ -1,6 +1,7 @@
-import {type FC} from "react";
+import { type FC } from "react";
 
-import {Button} from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 import {
     Dialog,
@@ -12,8 +13,8 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 
-import type {Issue} from "@/models/issue/issue.type.ts";
-import {Badge} from "@/components/ui/badge.tsx";
+import type { Issue } from "@/models/issue/issue.type";
+import { labelService } from "@/services/service";
 
 export interface InfoIssuePopupProps {
     data: Issue;
@@ -23,18 +24,19 @@ const InfoIssuePopup: FC<InfoIssuePopupProps> = ({data}) => {
     return (
         <Dialog>
             <DialogTrigger render={
-                <button className={"relative cursor-pointer text-xl font-bold after:absolute after:hidden after:content-[''] after:top-full after:left-0 after:w-full after:h-0.5 after:bg-gray-800 hover:after:block"}>
+                <button className="relative cursor-pointer text-xl font-bold after:absolute after:hidden after:content-[''] after:top-full after:left-0 after:w-full after:h-0.5 after:bg-gray-800 hover:after:block">
                                    {data.title.length > 20 ? `${data.title.slice(0, 20)}...` : data.title}
                 </button>
             } />
             <DialogContent showCloseButton={false}>
                 <DialogHeader>
                     <DialogTitle>{data.title}</DialogTitle>
-                    <div className={'flex items-center gap-x-1'}>
+                    <div className='flex items-center gap-x-1'>
                         {
-                            data.labels.map((label) => (
-                                <Badge key={label.id} variant="default" style={{backgroundColor: label.color}}>{label.name}</Badge>
-                            ))
+                            data.labels.map((label) => {
+                                const labelData = labelService.getOne(label)!;
+                                return <Badge key={labelData.id} variant="default" style={{backgroundColor: labelData.color}}>{labelData.name}</Badge>
+                            })
                         }
                     </div>
                 </DialogHeader>

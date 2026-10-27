@@ -5,4 +5,5 @@ export interface LabelAttributes {
 
 export interface Label extends LabelAttributes {
     id: string;
+    created: number;
 }

@@ -1,3 +1,8 @@
+import { type FC, useState } from "react";
+
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+
 import {
     Field,
     FieldGroup,
@@ -5,7 +10,7 @@ import {
     FieldLegend,
     FieldSeparator,
     FieldSet,
-} from "@/components/ui/field.tsx";
+} from "@/components/ui/field";
 
 import {
     Dialog,
@@ -15,26 +20,25 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 
-import {Input} from "@/components/ui/input.tsx";
-import {Button} from "@/components/ui/button.tsx";
-import {type FC, useState} from "react";
-import {labelService} from "@/services/service.ts";
+export interface AddLabelProps {
+    onSubmit: (name: string, color: string) => void;
+}
 
-const AddLabelPopup: FC = () => {
+const AddLabelPopup: FC<AddLabelProps> = ({onSubmit}) => {
     const [open, setOpen] = useState<boolean>(false);
 
     const handleSubmit = (formData: FormData) => {
         const name = formData.get("name")! as string;
         const color = formData.get("color")! as string;
-        labelService.create({name, color});
+        onSubmit(name, color);
         setOpen(false);
-    }
+    };
 
     return (
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger render={<Button variant="outline" size="lg" className="cursor-pointer">New Label</Button>}/>
                 <DialogContent showCloseButton={false}>
-                    <form action={handleSubmit} className={'flex flex-col gap-y-5'}>
+                    <form action={handleSubmit} className='flex flex-col gap-y-5'>
                         <FieldGroup>
                             <FieldSet>
                                 <FieldLegend className="font-bold text-3xl">Add New Label</FieldLegend>

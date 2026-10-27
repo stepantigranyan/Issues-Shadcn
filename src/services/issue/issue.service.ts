@@ -1,6 +1,5 @@
-import {type IssueRepositoryTypes} from "@/repositories/issue/issue.repository.ts";
-import type {Issue, IssueAttributes} from "@/models/issue/issue.type.ts";
-import type {Label} from "@/models/label/label.type.ts";
+import { type IssueRepositoryTypes } from "@/repositories/issue/issue.repository.ts";
+import type { Issue } from "@/models/issue/issue.type.ts";
 
 export class IssueService {
     private readonly issueRepository: IssueRepositoryTypes;
@@ -9,8 +8,8 @@ export class IssueService {
         this.issueRepository = issueRepository;
     }
 
-    create(data: IssueAttributes, labels: Label[]): Issue {
-        return this.issueRepository.create(data, labels);
+    create(title: string, description: string, labels: string[]): Issue {
+        return this.issueRepository.create(title, description, labels);
     }
 
     getAll(sortBy: 'ASC' | 'DESC' | undefined): Issue[] {
