@@ -44,7 +44,8 @@ const useLabelService = (service: LabelService) => {
                 setLoading(true);
                 setCurrentPage(1);
                 const label = service.create({ name, color });
-                setLabels((prev) => [label, ...prev]);
+                const newLabels = [label, ...labels];
+                setLabels(newLabels);
 
                 const offsetLabels = [label, ...labels].slice(
                     0,
@@ -52,9 +53,7 @@ const useLabelService = (service: LabelService) => {
                 );
 
                 setVisibleLabels({
-                    pages: Math.ceil(
-                        (labels.length + 1) / VISIBLE_LABELS_COUNT,
-                    ),
+                    pages: Math.ceil(newLabels.length / VISIBLE_LABELS_COUNT),
                     data: offsetLabels,
                 });
             } finally {
@@ -94,21 +93,22 @@ const useLabelService = (service: LabelService) => {
                 service.delete(id);
                 const newIssues = labels.filter((x) => x.id !== id);
                 setLabels(newIssues);
+                const prevPage = currentPage - 1;
 
                 if (visibleLabels.data.length === 1) {
                     if (visibleLabels.pages === 1) {
                         setLabels([]);
-                        setVisibleLabels({ data: [], pages: 0 });
+                        setVisibleLabels({ data: [], pages: 1 });
                         return;
                     }
 
-                    const offset = VISIBLE_LABELS_COUNT * (currentPage - 2);
+                    const offset = VISIBLE_LABELS_COUNT * prevPage - 1;
                     const offsetLabels = newIssues.slice(
                         offset,
                         offset + VISIBLE_LABELS_COUNT,
                     );
 
-                    setCurrentPage((prev) => prev - 1);
+                    setCurrentPage(prevPage);
                     setVisibleLabels({
                         data: offsetLabels,
                         pages: Math.ceil(
@@ -118,7 +118,7 @@ const useLabelService = (service: LabelService) => {
                     return;
                 }
 
-                const offset = VISIBLE_LABELS_COUNT * (currentPage - 1);
+                const offset = VISIBLE_LABELS_COUNT * prevPage;
                 const offsetLabels = newIssues.slice(
                     offset,
                     offset + VISIBLE_LABELS_COUNT,
@@ -142,33 +142,16 @@ const useLabelService = (service: LabelService) => {
     );
 
     const changePage = useCallback(
-        (direction: 'right' | 'left', page?: number) => {
+        (page: number) => {
             try {
                 setLoading(true);
-                let offsetLabels;
-                let offset;
+                setCurrentPage(page);
 
-                if (page === undefined) {
-                    if (direction === 'left') {
-                        setCurrentPage((prev) => prev + 1);
-                        offset = currentPage * VISIBLE_LABELS_COUNT;
-                    } else {
-                        setCurrentPage((prev) => prev - 1);
-                        offset = (currentPage - 2) * VISIBLE_LABELS_COUNT;
-                    }
-
-                    offsetLabels = labels.slice(
-                        offset,
-                        offset + VISIBLE_LABELS_COUNT,
-                    );
-                } else {
-                    setCurrentPage(page);
-                    const offset = (page - 1) * VISIBLE_LABELS_COUNT;
-                    offsetLabels = labels.slice(
-                        offset,
-                        offset + VISIBLE_LABELS_COUNT,
-                    );
-                }
+                const offset = (page - 1) * VISIBLE_LABELS_COUNT;
+                const offsetLabels = labels.slice(
+                    offset,
+                    offset + VISIBLE_LABELS_COUNT,
+                );
 
                 setVisibleLabels({
                     pages: Math.ceil(labels.length / VISIBLE_LABELS_COUNT),
@@ -180,7 +163,7 @@ const useLabelService = (service: LabelService) => {
                 }, 200);
             }
         },
-        [currentPage, labels],
+        [labels],
     );
 
     const sort = useCallback(
@@ -202,7 +185,7 @@ const useLabelService = (service: LabelService) => {
                     sortedData = labels.sort((a, b) => b.created - a.created);
                 }
 
-                setLabels(sortedData!);
+                setLabels(sortedData);
                 setVisibleLabels({
                     pages: Math.ceil(sortedData!.length / VISIBLE_LABELS_COUNT),
                     data: sortedData!.slice(0, VISIBLE_LABELS_COUNT),

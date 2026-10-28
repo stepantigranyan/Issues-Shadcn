@@ -18,7 +18,7 @@ export interface IssueTableProps {
     currentPage: number;
     loading: boolean;
     notFound: boolean;
-    onChangePage: (direction: 'right' | 'left', page?: number) => void;
+    onChangePage: (page: number) => void;
     onEdit: (issue: Issue) => void;
     onDelete: (id: string) => void;
 }

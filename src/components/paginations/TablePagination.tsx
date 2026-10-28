@@ -13,7 +13,7 @@ import {
 export interface IssuesTablePaginationProps {
     pages: number;
     currentPage: number;
-    onChangePage: (direction: 'right' | 'left', page?: number) => void;
+    onChangePage: (page: number) => void;
 }
 
 const TablePagination: FC<IssuesTablePaginationProps> = ({
@@ -27,7 +27,7 @@ const TablePagination: FC<IssuesTablePaginationProps> = ({
                 {currentPage !== 1 ? (
                     <PaginationPrevious
                         className="justify-self-start-safe cursor-pointer"
-                        onClick={() => onChangePage('right')}
+                        onClick={() => onChangePage(currentPage - 1)}
                     />
                 ) : (
                     <div></div>
@@ -38,7 +38,7 @@ const TablePagination: FC<IssuesTablePaginationProps> = ({
                         <PaginationItem>
                             <PaginationLink
                                 onClick={() => {
-                                    onChangePage('right', 1);
+                                    onChangePage(1);
                                 }}
                                 href="#"
                             >
@@ -57,7 +57,7 @@ const TablePagination: FC<IssuesTablePaginationProps> = ({
                         <PaginationItem>
                             <PaginationLink
                                 onClick={() => {
-                                    onChangePage('right', currentPage - 1);
+                                    onChangePage(currentPage - 1);
                                 }}
                                 href="#"
                             >
@@ -76,7 +76,7 @@ const TablePagination: FC<IssuesTablePaginationProps> = ({
                         <PaginationItem>
                             <PaginationLink
                                 onClick={() => {
-                                    onChangePage('left', currentPage + 1);
+                                    onChangePage(currentPage + 1);
                                 }}
                                 href="#"
                             >
@@ -95,7 +95,7 @@ const TablePagination: FC<IssuesTablePaginationProps> = ({
                         <PaginationItem>
                             <PaginationLink
                                 onClick={() => {
-                                    onChangePage('left', pages);
+                                    onChangePage(pages);
                                 }}
                                 href="#"
                             >
@@ -108,7 +108,7 @@ const TablePagination: FC<IssuesTablePaginationProps> = ({
                 {currentPage !== pages ? (
                     <PaginationNext
                         className="justify-self-end-safe cursor-pointer"
-                        onClick={() => onChangePage('left')}
+                        onClick={() => onChangePage(currentPage + 1)}
                     />
                 ) : (
                     <div></div>
