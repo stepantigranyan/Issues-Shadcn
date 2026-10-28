@@ -1,8 +1,9 @@
-import {useState, useLayoutEffect, useCallback} from "react";
-import {VISIBLE_LABELS_COUNT} from "@/consts";
-import type {Label} from "@/models/label/label.type.ts";
-import type {LabelService} from "@/services/label/label.service.ts";
-import type {FindAndCountLabels} from "@/repositories/label/label.repository.ts";
+import { useState, useLayoutEffect, useCallback } from "react";
+import type { Label } from "@/models/label/label.type";
+import type { LabelService } from "@/services/label/label.service";
+
+import { VISIBLE_LABELS_COUNT } from "@/consts";
+import type { FindAndCountLabels } from "@/repositories/label/label.repository";
 
 const useLabelService = (service: LabelService) => {
     const [labels, setLabels] = useState<Label[]>([]);

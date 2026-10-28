@@ -1,8 +1,9 @@
-import {useState, useLayoutEffect, useCallback} from "react";
-import type {IssueService} from "../services/issue/issue.service.ts";
-import type {Issue, IssueAttributes} from "../models/issue/issue.type.ts";
-import {VISIBLE_ISSUES_COUNT} from "@/consts";
-import type {FindAndCountIssues} from "@/repositories/issue/issue.repository.ts";
+import { useState, useLayoutEffect, useCallback } from "react";
+import type { IssueService } from "../services/issue/issue.service";
+import type { Issue } from "../models/issue/issue.type";
+
+import { VISIBLE_ISSUES_COUNT } from "@/consts";
+import type { FindAndCountIssues } from "@/repositories/issue/issue.repository";
 
 const useIssueService = (service: IssueService) => {
     const [issues, setIssues] = useState<Issue[]>([]);

@@ -35,4 +35,4 @@ export function generateId(index: number, customKeys?: Key[]): string {
     }
 
     return generatedId.join('');
-};
+}

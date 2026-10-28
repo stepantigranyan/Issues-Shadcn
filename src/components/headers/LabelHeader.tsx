@@ -1,4 +1,4 @@
-import {type FC, memo} from "react";
+import { type FC, memo } from "react";
 
 import {
     Item,
@@ -17,7 +17,7 @@ const LabelHeader: FC<MainHeaderProps> = ({onAddLabel}) => {
     return (
         <Item variant="default" className="px-0">
             <ItemContent>
-                <ItemTitle className="text-2xl font-bold">Labels</ItemTitle>
+                <ItemTitle className="text-4xl font-bold">Labels</ItemTitle>
             </ItemContent>
             <ItemActions>
                 <AddLabelPopup onSubmit={onAddLabel}/>

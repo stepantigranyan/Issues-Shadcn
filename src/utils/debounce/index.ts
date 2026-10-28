@@ -6,5 +6,5 @@ export const debounce = (fn: Function, delay: number) => {
         timeout = setTimeout(() => {
             fn(...args);
         }, delay);
-    }
-}
+    };
+};

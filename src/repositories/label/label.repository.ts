@@ -1,7 +1,9 @@
-import type {Label, LabelAttributes} from "@/models/label/label.type.ts";
-import {generateId} from "@/utils/generateId";
-import {ISSUES_STORAGE_KEY} from "@/repositories/issue/issue.repository.ts";
-import type {Issue} from "@/models/issue/issue.type.ts";
+import type { Label, LabelAttributes } from "@/models/label/label.type";
+
+import type { Issue } from "@/models/issue/issue.type";
+import { ISSUES_STORAGE_KEY } from "@/repositories/issue/issue.repository";
+
+import { generateId } from "@/utils/generateId";
 
 export interface FindAndCountLabels {
     data: Label[],

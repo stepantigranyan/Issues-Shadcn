@@ -1,4 +1,4 @@
-import {type FC, memo} from "react";
+import { type FC, memo } from "react";
 
 import {
     Item,
@@ -16,7 +16,7 @@ const IssueHeader: FC<MainHeaderProps> = ({onAddIssue}) => {
     return (
         <Item variant="default" className="px-0">
             <ItemContent>
-                <ItemTitle className="text-2xl font-bold">Issues</ItemTitle>
+                <ItemTitle className="text-4xl font-bold">Issues</ItemTitle>
             </ItemContent>
             <ItemActions>
                 <AddIssuePopup onSubmit={onAddIssue} />

@@ -2,9 +2,9 @@ import { NavLink, Outlet } from 'react-router';
 
 const Layout = () => {
     return (
-        <div className="h-screen flex items-center justify-center">
+        <div className="relative h-screen flex items-center justify-center">
             <div className="w-full mx-auto my-2 mb-0 px-2 sm:w-3xl">
-                <header className={'flex items-center gap-x-5 mb-10'}>
+                <header className='absolute top-0 left-0 w-full px-10 py-5 flex items-center gap-x-5 mb-10'>
                     <NavLink
                         to="/issues"
                         className={({ isActive }) =>

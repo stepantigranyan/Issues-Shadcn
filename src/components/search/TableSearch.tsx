@@ -67,6 +67,7 @@ const TableSearch: FC<IssuesTableSearchProps> = ({onSort, onSearch}) => {
     return (
         <div className="flex justify-between items-center w-full">
             <form className="flex items-center gap-x-2">
+                <Button onClick={handleSearchButtonClick} className="cursor-pointer" size="icon"><Search/></Button>
                 <div className='relative'>
                     <Input ref={ref} value={query} onChange={handleInput} name="search" placeholder="Search..." />
                     {
@@ -84,7 +85,6 @@ const TableSearch: FC<IssuesTableSearchProps> = ({onSort, onSearch}) => {
                         </Button>
                     }
                 </div>
-                <Button onClick={handleSearchButtonClick} className="cursor-pointer" size="icon"><Search/></Button>
             </form>
             <div className='flex items-center gap-x-2'>
                 <ItemTitle>Sort</ItemTitle>

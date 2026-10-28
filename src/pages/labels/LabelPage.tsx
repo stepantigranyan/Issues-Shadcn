@@ -1,9 +1,9 @@
-import useLabelService from "@/hooks/useLabelService.ts";
-import {labelService} from "@/services/service.ts";
+import useLabelService from "@/hooks/useLabelService";
+import { labelService } from "@/services/service";
 
-import LabelHeader from "@/components/headers/LabelHeader.tsx";
-import LabelTable from "@/components/tables/LabelTable.tsx";
-import TableSearch from "@/components/search/TableSearch.tsx";
+import LabelHeader from "@/components/headers/LabelHeader";
+import LabelTable from "@/components/tables/LabelTable";
+import TableSearch from "@/components/search/TableSearch";
 
 const IssuesPage = () => {
     const {visibleLabels, currentPage, loading, notFound, addLabel, editLabel, deleteLabel, changePage, sort, search} = useLabelService(labelService);

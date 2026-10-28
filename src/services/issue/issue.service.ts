@@ -1,5 +1,5 @@
-import { type IssueRepositoryTypes } from "@/repositories/issue/issue.repository.ts";
-import type { Issue } from "@/models/issue/issue.type.ts";
+import { type IssueRepositoryTypes } from "@/repositories/issue/issue.repository";
+import type { Issue } from "@/models/issue/issue.type";
 
 export class IssueService {
     private readonly issueRepository: IssueRepositoryTypes;

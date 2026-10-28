@@ -1,8 +1,8 @@
-import {IssueRepository} from "../repositories/issue/issue.repository.ts";
-import {IssueService} from "./issue/issue.service.ts";
+import { IssueRepository } from "../repositories/issue/issue.repository";
+import { IssueService } from "./issue/issue.service";
 
-import {LabelRepository} from "../repositories/label/label.repository.ts";
-import {LabelService} from "./label/label.service.ts";
+import { LabelRepository } from "../repositories/label/label.repository";
+import { LabelService } from "./label/label.service";
 
 export const issueService = new IssueService(new IssueRepository());
 export const labelService = new LabelService(new LabelRepository());

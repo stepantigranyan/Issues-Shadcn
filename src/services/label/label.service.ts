@@ -1,5 +1,5 @@
-import {type LabelRepositoryTypes} from "@/repositories/label/label.repository.ts";
-import type {Label, LabelAttributes} from "@/models/label/label.type.ts";
+import { type LabelRepositoryTypes } from "@/repositories/label/label.repository";
+import type { Label, LabelAttributes } from "@/models/label/label.type";
 
 export class LabelService {
     private readonly labelRepository: LabelRepositoryTypes;

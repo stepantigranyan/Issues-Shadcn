@@ -16,7 +16,8 @@ import {
 import InfoLabelPopup from "@/components/popups/label/info/InfoLabelPopup";
 import EditLabelPopup from "@/components/popups/label/edit/EditLabelPopup";
 import DeletePopup from "@/components/popups/DeletePopup";
-import {DialogDescription} from "@/components/ui/dialog";
+
+import { DialogDescription } from "@/components/ui/dialog";
 
 import type { Label } from "@/models/label/label.type";
 import { issueService } from "@/services/service.ts";

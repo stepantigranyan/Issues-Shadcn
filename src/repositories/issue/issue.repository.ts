@@ -1,5 +1,6 @@
-import type {Issue, IssueAttributes} from "@/models/issue/issue.type.ts";
-import {generateId} from "@/utils/generateId";
+import type { Issue, IssueAttributes } from "@/models/issue/issue.type";
+
+import { generateId } from "@/utils/generateId";
 
 export interface FindAndCountIssues {
     data: Issue[];
