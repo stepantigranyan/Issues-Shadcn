@@ -16,16 +16,23 @@ const useIssueService = (service: IssueService) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [notFound, setNotFound] = useState<boolean>(false);
 
+    const countOffset = (page: number) => {
+        return (page - 1) * VISIBLE_ISSUES_COUNT;
+    };
+
+    const offsetIssues = (array: Issue[], from: number) => {
+        return array.slice(from, from + VISIBLE_ISSUES_COUNT);
+    };
+
     const loadIssues = useCallback(() => {
         try {
             setLoading(true);
             setCurrentPage(1);
             const allIssues = service.getAll(sortBy);
             setIssues(allIssues);
-            const offsetIssues = allIssues.slice(0, VISIBLE_ISSUES_COUNT);
             setVisibleIssues({
                 pages: Math.ceil(allIssues.length / VISIBLE_ISSUES_COUNT),
-                data: offsetIssues,
+                data: offsetIssues(allIssues, 0),
             });
         } finally {
             setTimeout(() => {
@@ -49,11 +56,9 @@ const useIssueService = (service: IssueService) => {
 
                 setIssues(newIssues);
 
-                const offsetIssues = newIssues.slice(0, VISIBLE_ISSUES_COUNT);
-
                 setVisibleIssues({
                     pages: Math.ceil(newIssues.length / VISIBLE_ISSUES_COUNT),
-                    data: offsetIssues,
+                    data: offsetIssues(newIssues, 0),
                 });
             } finally {
                 setTimeout(() => {
@@ -91,8 +96,8 @@ const useIssueService = (service: IssueService) => {
                 setLoading(true);
                 service.delete(id);
                 const newIssues = issues.filter((x) => x.id !== id);
-                setIssues(newIssues);
                 const prevPage = currentPage - 1;
+                setIssues(newIssues);
 
                 if (visibleIssues.data.length === 1) {
                     if (visibleIssues.pages === 1) {
@@ -101,15 +106,11 @@ const useIssueService = (service: IssueService) => {
                         return;
                     }
 
-                    const offset = VISIBLE_ISSUES_COUNT * (prevPage - 1);
-                    const offsetIssues = newIssues.slice(
-                        offset,
-                        offset + VISIBLE_ISSUES_COUNT,
-                    );
+                    const offset = countOffset(prevPage);
 
                     setCurrentPage(prevPage);
                     setVisibleIssues({
-                        data: offsetIssues,
+                        data: offsetIssues(newIssues, offset),
                         pages: Math.ceil(
                             newIssues.length / VISIBLE_ISSUES_COUNT,
                         ),
@@ -117,14 +118,10 @@ const useIssueService = (service: IssueService) => {
                     return;
                 }
 
-                const offset = VISIBLE_ISSUES_COUNT * prevPage;
-                const offsetIssues = newIssues.slice(
-                    offset,
-                    offset + VISIBLE_ISSUES_COUNT,
-                );
+                const offset = countOffset(currentPage);
 
                 setVisibleIssues({
-                    data: offsetIssues,
+                    data: offsetIssues(newIssues, offset),
                     pages: Math.ceil(newIssues.length / VISIBLE_ISSUES_COUNT),
                 });
             } finally {
@@ -146,15 +143,11 @@ const useIssueService = (service: IssueService) => {
                 setLoading(true);
                 setCurrentPage(page);
 
-                const offset = (page - 1) * VISIBLE_ISSUES_COUNT;
-                const offsetIssues = issues.slice(
-                    offset,
-                    offset + VISIBLE_ISSUES_COUNT,
-                );
+                const offset = countOffset(page);
 
                 setVisibleIssues({
                     pages: Math.ceil(issues.length / VISIBLE_ISSUES_COUNT),
-                    data: offsetIssues,
+                    data: offsetIssues(issues, offset),
                 });
             } finally {
                 setTimeout(() => {
@@ -187,7 +180,7 @@ const useIssueService = (service: IssueService) => {
                 setIssues(sortedData);
                 setVisibleIssues({
                     pages: Math.ceil(sortedData!.length / VISIBLE_ISSUES_COUNT),
-                    data: sortedData!.slice(0, VISIBLE_ISSUES_COUNT),
+                    data: offsetIssues(sortedData, 0),
                 });
                 setCurrentPage(1);
             } finally {
@@ -231,7 +224,7 @@ const useIssueService = (service: IssueService) => {
 
                 setIssues(searchedIssues);
                 setVisibleIssues({
-                    data: searchedOffsetIssues,
+                    data: offsetIssues(searchedOffsetIssues, 0),
                     pages: Math.ceil(
                         searchedIssues.length / VISIBLE_ISSUES_COUNT,
                     ),
