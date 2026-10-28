@@ -1,13 +1,13 @@
-import type { Label, LabelAttributes } from "@/models/label/label.type";
+import type { Label, LabelAttributes } from '@/models/label/label.type';
 
-import type { Issue } from "@/models/issue/issue.type";
-import { ISSUES_STORAGE_KEY } from "@/repositories/issue/issue.repository";
+import type { Issue } from '@/models/issue/issue.type';
+import { ISSUES_STORAGE_KEY } from '@/repositories/issue/issue.repository';
 
-import { generateId } from "@/utils/generateId";
+import { generateId } from '@/utils/generateId';
 
 export interface FindAndCountLabels {
-    data: Label[],
-    pages: number,
+    data: Label[];
+    pages: number;
 }
 
 export interface LabelRepositoryTypes {
@@ -18,9 +18,9 @@ export interface LabelRepositoryTypes {
     delete: (id: string) => void;
 }
 
-export const LABELS_STORAGE_KEY = "labels";
+export const LABELS_STORAGE_KEY = 'labels';
 
-export class LabelRepository implements LabelRepositoryTypes  {
+export class LabelRepository implements LabelRepositoryTypes {
     create(data: LabelAttributes): Label {
         const labels = this.getAll(undefined);
 
@@ -30,7 +30,10 @@ export class LabelRepository implements LabelRepositoryTypes  {
             ...data,
         };
 
-        localStorage.setItem(LABELS_STORAGE_KEY, JSON.stringify([...labels, label]));
+        localStorage.setItem(
+            LABELS_STORAGE_KEY,
+            JSON.stringify([...labels, label]),
+        );
         return label;
     }
 
@@ -47,15 +50,12 @@ export class LabelRepository implements LabelRepositoryTypes  {
 
         const parsedData = JSON.parse(data) as Label[];
 
-        if (sortBy === "ASC") {
-            return parsedData.sort((a, b) => a.name < b.name ? -1 : 1)
-        }
-
-        else {
-            return parsedData.sort((a, b) => b.name < a.name ? -1 : 1)
+        if (sortBy === 'ASC') {
+            return parsedData.sort((a, b) => (a.name < b.name ? -1 : 1));
+        } else {
+            return parsedData.sort((a, b) => (b.name < a.name ? -1 : 1));
         }
     }
-
 
     getOne(id: string): Label | undefined {
         const labels = this.getAll(undefined);
@@ -66,7 +66,7 @@ export class LabelRepository implements LabelRepositoryTypes  {
         const labels = this.getAll(undefined);
         const labelIndex = labels.findIndex((x) => x.id === id);
 
-        labels[labelIndex] = {...labels[labelIndex], ...data};
+        labels[labelIndex] = { ...labels[labelIndex], ...data };
         localStorage.setItem(LABELS_STORAGE_KEY, JSON.stringify(labels));
 
         return labels[labelIndex];
@@ -74,9 +74,14 @@ export class LabelRepository implements LabelRepositoryTypes  {
 
     delete(id: string): void {
         const labels = this.getAll(undefined);
-        localStorage.setItem(LABELS_STORAGE_KEY, JSON.stringify(labels.filter(x => x.id !== id)));
-        
-        const issues = JSON.parse(localStorage.getItem(ISSUES_STORAGE_KEY) || "[]") as Issue[];
+        localStorage.setItem(
+            LABELS_STORAGE_KEY,
+            JSON.stringify(labels.filter((x) => x.id !== id)),
+        );
+
+        const issues = JSON.parse(
+            localStorage.getItem(ISSUES_STORAGE_KEY) || '[]',
+        ) as Issue[];
 
         const updatedIssues = issues.map((issue) => {
             issue.labels = issue.labels.filter((x) => x !== id);

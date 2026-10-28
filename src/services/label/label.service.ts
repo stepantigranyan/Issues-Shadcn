@@ -1,5 +1,5 @@
-import { type LabelRepositoryTypes } from "@/repositories/label/label.repository";
-import type { Label, LabelAttributes } from "@/models/label/label.type";
+import { type LabelRepositoryTypes } from '@/repositories/label/label.repository';
+import type { Label, LabelAttributes } from '@/models/label/label.type';
 
 export class LabelService {
     private readonly labelRepository: LabelRepositoryTypes;
@@ -21,7 +21,10 @@ export class LabelService {
     }
 
     update(lb: Label): Label {
-        return this.labelRepository.update(lb.id, {name: lb.name, color: lb.color});
+        return this.labelRepository.update(lb.id, {
+            name: lb.name,
+            color: lb.color,
+        });
     }
 
     delete(id: string): void {

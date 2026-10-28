@@ -1,7 +1,7 @@
-import { type FC } from "react";
+import { type FC } from 'react';
 
-import { Input } from "@/components/ui/input.tsx";
-import { Button } from "@/components/ui/button.tsx";
+import { Input } from '@/components/ui/input.tsx';
+import { Button } from '@/components/ui/button.tsx';
 
 import {
     Field,
@@ -10,16 +10,16 @@ import {
     FieldLegend,
     FieldSeparator,
     FieldSet,
-} from "@/components/ui/field";
+} from '@/components/ui/field';
 
 import {
     Dialog,
     DialogClose,
     DialogContent,
     DialogFooter,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 
-import type { Label } from "@/models/label/label.type";
+import type { Label } from '@/models/label/label.type';
 
 export interface EditLabelProps {
     open: boolean;
@@ -28,25 +28,35 @@ export interface EditLabelProps {
     data: Label;
 }
 
-const EditLabelPopup: FC<EditLabelProps> = ({onSubmit, open, onOpenChange,  data}) => {
+const EditLabelPopup: FC<EditLabelProps> = ({
+    onSubmit,
+    open,
+    onOpenChange,
+    data,
+}) => {
     const handleSubmit = (formData: FormData) => {
-        const name = formData.get("name")! as string;
-        const color = formData.get("color")! as string;
-        onSubmit({...data, name, color});
+        const name = formData.get('name')! as string;
+        const color = formData.get('color')! as string;
+        onSubmit({ ...data, name, color });
         onOpenChange(false);
-    }
+    };
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent showCloseButton={false}>
-                <form action={handleSubmit} className='flex flex-col gap-y-5'>
+                <form action={handleSubmit} className="flex flex-col gap-y-5">
                     <FieldGroup>
                         <FieldSet>
-                            <FieldLegend className="font-bold text-3xl">Edit Label</FieldLegend>
+                            <FieldLegend className="font-bold text-3xl">
+                                Edit Label
+                            </FieldLegend>
                             <FieldSeparator />
                             <FieldGroup className="my-5">
                                 <Field>
-                                    <FieldLabel className="inline" htmlFor="label-name">
+                                    <FieldLabel
+                                        className="inline"
+                                        htmlFor="label-name"
+                                    >
                                         Name
                                     </FieldLabel>
                                     <Input
@@ -57,8 +67,14 @@ const EditLabelPopup: FC<EditLabelProps> = ({onSubmit, open, onOpenChange,  data
                                         required
                                     />
                                 </Field>
-                                <Field className="flex items-center justify-between" orientation="horizontal">
-                                    <FieldLabel className="inline" htmlFor="label-color">
+                                <Field
+                                    className="flex items-center justify-between"
+                                    orientation="horizontal"
+                                >
+                                    <FieldLabel
+                                        className="inline"
+                                        htmlFor="label-color"
+                                    >
                                         Color
                                     </FieldLabel>
                                     <Input
@@ -67,7 +83,8 @@ const EditLabelPopup: FC<EditLabelProps> = ({onSubmit, open, onOpenChange,  data
                                         required
                                         className="w-20"
                                         type="color"
-                                        id="label-color"/>
+                                        id="label-color"
+                                    />
                                 </Field>
                             </FieldGroup>
                         </FieldSet>
@@ -76,7 +93,13 @@ const EditLabelPopup: FC<EditLabelProps> = ({onSubmit, open, onOpenChange,  data
                     <DialogFooter>
                         <Field orientation="horizontal">
                             <Button type="submit">Submit</Button>
-                            <DialogClose render={<Button variant="outline" type="button">Cancel</Button>}/>
+                            <DialogClose
+                                render={
+                                    <Button variant="outline" type="button">
+                                        Cancel
+                                    </Button>
+                                }
+                            />
                         </Field>
                     </DialogFooter>
                 </form>

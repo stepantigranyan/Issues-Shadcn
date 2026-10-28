@@ -1,5 +1,5 @@
-import { type IssueRepositoryTypes } from "@/repositories/issue/issue.repository";
-import type { Issue } from "@/models/issue/issue.type";
+import { type IssueRepositoryTypes } from '@/repositories/issue/issue.repository';
+import type { Issue } from '@/models/issue/issue.type';
 
 export class IssueService {
     private readonly issueRepository: IssueRepositoryTypes;
@@ -17,10 +17,14 @@ export class IssueService {
     }
 
     update(iss: Issue): Issue | undefined {
-        return this.issueRepository.update(iss.id, {title: iss.title, description: iss.description}, iss.labels);
+        return this.issueRepository.update(
+            iss.id,
+            { title: iss.title, description: iss.description },
+            iss.labels,
+        );
     }
 
     delete(id: string): void {
         return this.issueRepository.delete(id);
     }
- }
+}

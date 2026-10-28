@@ -1,13 +1,14 @@
-import { type FC, type JSX } from "react";
+import { type FC, type JSX } from 'react';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
     Dialog,
-    DialogClose, DialogContent,
+    DialogClose,
+    DialogContent,
     DialogFooter,
     DialogHeader,
     DialogTitle,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 
 export interface DeleteIssuePopupProps {
     id: string;
@@ -17,25 +18,31 @@ export interface DeleteIssuePopupProps {
     children?: JSX.Element;
 }
 
-const DeletePopup: FC<DeleteIssuePopupProps> = ({onSubmit, id, open, onOpenChange, children}) => {
+const DeletePopup: FC<DeleteIssuePopupProps> = ({
+    onSubmit,
+    id,
+    open,
+    onOpenChange,
+    children,
+}) => {
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent showCloseButton={false}>
                 <DialogHeader>
-                    <DialogTitle>
-                        Are you sure?
-                    </DialogTitle>
+                    <DialogTitle>Are you sure?</DialogTitle>
                 </DialogHeader>
-                {
-                    children
-                }
+                {children}
                 <DialogFooter>
-                    <Button onClick={() => onSubmit(id)} variant="destructive">Delete</Button>
-                    <DialogClose render={<Button variant="outline">Cancel</Button>}></DialogClose>
+                    <Button onClick={() => onSubmit(id)} variant="destructive">
+                        Delete
+                    </Button>
+                    <DialogClose
+                        render={<Button variant="outline">Cancel</Button>}
+                    ></DialogClose>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
     );
 };
 
-export default  DeletePopup;
+export default DeletePopup;
